@@ -65,6 +65,7 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
                     }
                     sender.sendMessage(success.toString());
                     return true;
+
                 } else if (args.length == 3 && args[1].equals("unwatch")) {
                     Set<Plugin> plugins = getPlugins(args[2]);
                     if (plugins.size() == 0) {
@@ -72,26 +73,30 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
                         return true;
                     }
                     unwatchPlugins(plugins);
+                    StringBuilder success = new StringBuilder();
+                    success.append(ChatColor.GOLD).append("No longer watching ").append(args[2]);
+                    sender.sendMessage(success.toString());
+                    return true;
+
                 } else if (args.length == 2 && args[1].equals("subscribe")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         _eventSubscribers.add(player.getUniqueId());
                         sender.sendMessage(ChatColor.GOLD + "You will receive event duration notifications.");
-                        return true;
                     } else {
                         sender.sendMessage(ChatColor.RED + "You have to be in-game to receive event duration notifications.");
-                        return true;
                     }
+                    return true;
+
                 } else if (args.length == 2 && args[1].equals("unsubscribe")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         _eventSubscribers.remove(player.getUniqueId());
                         sender.sendMessage(ChatColor.GOLD + "You will no longer receive event duration notifications.");
-                        return true;
                     } else {
                         sender.sendMessage(ChatColor.RED + "You have to be in-game to unsubscribe from duration notifications.");
-                        return true;
                     }
+                    return true;
                 }
             } // /nerdlag event subcommands
         }
@@ -110,8 +115,8 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
         StringBuilder builder = new StringBuilder();
         builder.append(reg.getPlugin().getName()).append(" - ");
         builder.append(reg.getEventClass().getSimpleName()).append(" ");
-        builder.append(durationNanos * 0.001f).append(" \u00b5s (max ");
-        builder.append(reg.getMaxDurationNanos() * 0.001f).append(" \u00b5s)");
+        builder.append(nanosToMicros(durationNanos)).append(" \u00b5s (max ");
+        builder.append(nanosToMicros(reg.getMaxDurationNanos())).append(" \u00b5s)");
         String message = builder.toString();
         getLogger().info(message);
 
@@ -121,6 +126,17 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
                 player.sendMessage(ChatColor.LIGHT_PURPLE + message);
             }
         }
+    }
+
+    // ------------------------------------------------------------------------
+    /**
+     * Convert nanoseconds to microseconds, rounded up to the nearest integer.
+     *
+     * @param nanos nanoseconds duration.
+     * @return integer microseconds.
+     */
+    protected static long nanosToMicros(long nanos) {
+        return (nanos + 500) / 1000;
     }
 
     // ------------------------------------------------------------------------
