@@ -5,6 +5,8 @@ Tools for detecting various kinds of lag.
 
 Commands
 --------
+Note that, unless otherwise noted, plugin settings do not persist across restarts.  The plugin defaults to a safe, passive state.
+
 
 ```/nerdlag event watch (<plugin> | all) [<thresh_nanos>]```
  * Start watching the duration of event handlers for the specified plugin, or all plugins.
@@ -14,13 +16,12 @@ Commands
 ```/nerdlag event unwatch (<plugin> | all)</li>```
  * Stop watching the duration of event handlers for the specified plugin, or all plugins.
 
+```/nerdlag event notify (on|off)```
+ * Control whether the player receives in-game notifications of reports of events that exceed their duration threshold.
 
-```/nerdlag event subscribe```
- * Subscribe to in-game notifications of reports of events that exceed their duration threshold.
- * Reports will always be written to the server log, regardless of whether you subscribe to in-game notifications.
-
-```/nerdlag event unsubscribe```
- * Unsubscribe from in-game notifications of reports of events that exceed their duration threshold.
+```/nerdlag event log (on|off)```
+ * Control whether reports of events that exceed their duration threshold will be written to the server log.
+ * By default, reports are not logged.
 
 
 Permissions

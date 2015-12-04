@@ -28,8 +28,8 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
      * <ul>
      * <li>/nerdlag event watch (<plugin> | all) [<thresh_nanos>]</li>
      * <li>/nerdlag event unwatch (<plugin> | all)</li>
-     * <li>/nerdlag event subscribe</li>
-     * <li>/nerdlag event unsubscribe</li>
+     * <li>/nerdlag event notify (on|off)</li>
+     * <li>/nerdlag event log (on|off)</li>
      * </ul>
      */
     @Override
@@ -78,26 +78,31 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
                     sender.sendMessage(success.toString());
                     return true;
 
-                } else if (args.length == 2 && args[1].equals("subscribe")) {
+                } else if (args.length == 3 && args[1].equals("notify")) {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
-                        _eventSubscribers.add(player.getUniqueId());
-                        sender.sendMessage(ChatColor.GOLD + "You will receive event duration notifications.");
+                        boolean notify = args[2].equalsIgnoreCase("on") ||
+                                         args[2].equalsIgnoreCase("yes") ||
+                                         args[2].equalsIgnoreCase("true");
+                        if (notify) {
+                            _eventSubscribers.add(player.getUniqueId());
+                        } else {
+                            _eventSubscribers.remove(player.getUniqueId());
+                        }
+                        sender.sendMessage(ChatColor.GOLD + "In-game event duration notifications " + (notify ? "enabled." : "disabled."));
                     } else {
-                        sender.sendMessage(ChatColor.RED + "You have to be in-game to receive event duration notifications.");
+                        sender.sendMessage(ChatColor.RED + "You have to be in-game to manage event duration notifications.");
                     }
                     return true;
 
-                } else if (args.length == 2 && args[1].equals("unsubscribe")) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        _eventSubscribers.remove(player.getUniqueId());
-                        sender.sendMessage(ChatColor.GOLD + "You will no longer receive event duration notifications.");
-                    } else {
-                        sender.sendMessage(ChatColor.RED + "You have to be in-game to unsubscribe from duration notifications.");
-                    }
+                } else if (args.length == 3 && args[1].equals("log")) {
+                    _logReports = args[2].equalsIgnoreCase("on") ||
+                                  args[2].equalsIgnoreCase("yes") ||
+                                  args[2].equalsIgnoreCase("true");
+                    sender.sendMessage(ChatColor.GOLD + "Logging of reported events to server log " + (_logReports ? "enabled." : "disabled."));
                     return true;
                 }
+
             } // /nerdlag event subcommands
         }
         return false;
@@ -118,7 +123,9 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
         builder.append(nanosToMicros(durationNanos)).append(" \u00b5s (max ");
         builder.append(nanosToMicros(reg.getMaxDurationNanos())).append(" \u00b5s)");
         String message = builder.toString();
-        getLogger().info(message);
+        if (_logReports) {
+            getLogger().info(message);
+        }
 
         for (UUID uuid : _eventSubscribers) {
             Player player = Bukkit.getPlayer(uuid);
@@ -228,4 +235,9 @@ public class NerdLag extends JavaPlugin implements MaxTimedRegisteredListener.Ev
      * logouts or player deaths invalidating the Player instance.
      */
     protected HashSet<UUID> _eventSubscribers = new HashSet<UUID>();
+
+    /**
+     * Whether reports will be written to the server log.
+     */
+    protected boolean _logReports;
 } // class NerdLag

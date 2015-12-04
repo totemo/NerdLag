@@ -4,7 +4,7 @@
 	<groupId>io.totemo</groupId>
 	<artifactId>NerdLag</artifactId>
 	<name>NerdLag</name>
-	<version>0.1.0</version>
+	<version>0.2.0</version>
 	<packaging>jar</packaging>
     <description>Better organisation for your Bukkit help system.</description>
     <url>https://github.com/totemo/NerdLag</url>

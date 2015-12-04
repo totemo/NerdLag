@@ -1,5 +1,5 @@
 name: NerdLag
-version: 0.1.0
+version: 0.2.0
 author: totemo
 description: Tools for detecting various kinds of lag.
 website: http://github.com/totemo/NerdLag
@@ -15,6 +15,6 @@ commands:
     usage: |
       /<command> event watch <plugin> [<thresh_nanos>]: Start watching event durations for <plugin> (can be "all"), with optional instantaneous reporting above a threshold.
       /<command> event unwatch <plugin>: Stop watching event durations for <plugin> (can be "all").
-      /<command> event subscribe: Start receiving in-game reports of events taking longer than the threshold.
-      /<command> event unsubscribe: Stop receiving in-game reports of events taking longer than the threshold.
+      /<command> event notify (on|off): Control in-game notifications of reports of events taking longer than the threshold.
+      /<command> event log (on|off): Control logging of reports of events taking longer than the threshold.
 
